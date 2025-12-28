@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BMO New Year Adventure 2026</title>
+<title>FINDING AYA</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 body {
@@ -30,6 +30,22 @@ body::before {
   z-index:-1;
 }
 
+/* Sparkle effect */
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  animation: sparkle 1s infinite;
+}
+@keyframes sparkle {
+  0% {opacity:0; transform: scale(0.5);}
+  50% {opacity:1; transform: scale(1);}
+  100% {opacity:0; transform: scale(0.5);}
+}
+
+/* Start screen */
 .bmo-screen {
   width: 400px;
   height: 600px;
@@ -93,10 +109,24 @@ input {
   margin-top: auto;
 }
 
-/* Maze styles */
-.maze {
+/* Maze */
+.maze-container {
   display: none;
-  grid-template:repeat(7,46px)/repeat(7,46px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.maze {
+  display:grid;
+  grid-template:repeat(10,46px)/repeat(10,46px);
   gap:6px;
   background:#2a9d8f;
   padding:14px;
@@ -115,16 +145,26 @@ input {
 .char {
   width:32px;
   height:32px;
-  image-rendering:pixelated;
+  image-rendering: pixelated;
   position:absolute;
-  left:7px; top:6px;
-  transform:rotateX(8deg);
-  filter:drop-shadow(0 6px 4px rgba(0,0,0,.4));
+  left:7px;
+  top:6px;
+  transform: rotateX(12deg) rotateY(8deg);
+  filter: drop-shadow(0 6px 4px rgba(0,0,0,.4));
+}
+
+.hug {
+  animation: hugAnim 1s forwards;
+}
+@keyframes hugAnim {
+  0% {transform: translate(0,0) scale(1);}
+  50% {transform: translate(-5px,-5px) scale(1.2);}
+  100% {transform: translate(0,0) scale(1);}
 }
 
 .controls {
   margin-top:20px;
-  display:none;
+  display:grid;
   grid-template:repeat(2,60px)/repeat(3,60px);
   gap:8px;
 }
@@ -139,9 +179,10 @@ input {
 </head>
 <body>
 
+<!-- Start Screen -->
 <div class="bmo-screen" id="startScreen">
   <div class="save-file">
-    SAVE FILE 01: NEW YEAR 2026<br><br>
+    SAVE FILE 01: FINDING AYA<br><br>
     PLAYER:
     <input id="playerName" placeholder="Enter your name">
     <button class="enter-btn" id="enterBtn">ENTER</button>
@@ -158,28 +199,43 @@ input {
 </div>
 
 <!-- Maze -->
-<div class="maze" id="maze"></div>
-<div class="controls" id="controls">
-  <div></div><button onclick="move(0,-1)">⬆</button><div></div>
-  <button onclick="move(-1,0)">⬅</button>
-  <button onclick="move(1,0)">➡</button>
-  <div></div>
-  <button onclick="move(0,1)">⬇</button><div></div>
+<div class="maze-container" id="mazeContainer">
+  <div class="title">FINDING AYA</div>
+  <div class="maze" id="maze"></div>
+  <div class="controls" id="controls">
+    <div></div><button onclick="move(0,-1)">⬆</button><div></div>
+    <button onclick="move(-1,0)">⬅</button>
+    <button onclick="move(1,0)">➡</button>
+    <div></div>
+    <button onclick="move(0,1)">⬇</button><div></div>
+  </div>
 </div>
 
-<!-- Background music -->
 <audio id="bgMusic" loop>
   <source src="love-like-you.mp3" type="audio/mpeg">
 </audio>
 
 <script>
+// Beep
 function beep(v,f,d){
   const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();
   o.connect(g); g.connect(c.destination);
-  o.type="square"; o.frequency.value=f; g.gain.value=v;
+  o.type='square'; o.frequency.value=f; g.gain.value=v;
   o.start(); o.stop(c.currentTime+d/1000);
 }
 
+// Sparkles
+function createSparkle(){
+  const s=document.createElement('div');
+  s.classList.add('sparkle');
+  s.style.left=Math.random()*window.innerWidth+'px';
+  s.style.top=Math.random()*window.innerHeight+'px';
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),1000);
+}
+setInterval(createSparkle, 300);
+
+// Elements
 const nameInput = document.getElementById("playerName");
 const enterBtn = document.getElementById("enterBtn");
 const welcome = document.getElementById("welcome");
@@ -189,84 +245,96 @@ const progress = document.getElementById("progress");
 const loading = document.getElementById("loading");
 const startScreen = document.getElementById("startScreen");
 
+const mazeContainer = document.getElementById("mazeContainer");
 const mazeDiv = document.getElementById("maze");
 const controlsDiv = document.getElementById("controls");
+const bgMusic = document.getElementById("bgMusic");
 
-// Maze setup
-const map=[
-[0,0,1,0,0,0,0],
-[1,0,1,0,1,1,0],
-[0,0,0,0,0,1,0],
-[0,1,1,1,0,0,0],
-[0,0,0,1,0,1,0],
-[0,1,0,0,0,0,0],
-[0,0,0,1,1,1,0]
-];
-let her={x:0,y:0};
-const me={x:6,y:6};
-
-function drawMaze(){
-  mazeDiv.innerHTML="";
-  map.forEach((r,y)=>r.forEach((c,x)=>{
-    const d=document.createElement("div");
-    d.className="cell"+(c?" wall":"");
-    if(her.x==x&&her.y==y) d.innerHTML='<img class="char" src="assets/her.png">';
-    if(me.x==x&&me.y==y) d.innerHTML='<img class="char" src="assets/me.png">';
-    mazeDiv.appendChild(d);
-  }));
-}
-
-function move(dx,dy){
-  beep(.25,650,60);
-  const nx=her.x+dx, ny=her.y+dy;
-  if(map[ny]?.[nx]===0){
-    her.x=nx; her.y=ny; drawMaze();
-    if(nx==me.x&&ny==me.y){
-      beep(.4,300,200);
-      alert("Mini HER found YOU! (next game not yet implemented)");
-    }
-  }
-}
-
-document.onkeydown=e=>{
-  if(e.key=="ArrowUp") move(0,-1);
-  if(e.key=="ArrowDown") move(0,1);
-  if(e.key=="ArrowLeft") move(-1,0);
-  if(e.key=="ArrowRight") move(1,0);
-};
-
-// Start adventure
-enterBtn.onclick = () => {
+// Start screen
+enterBtn.addEventListener('click',()=>{
   if(!nameInput.value.trim()) return;
   beep(.3,400,100);
   progress.style.width="100%";
   welcome.style.display="block";
   question.style.display="block";
   buttons.style.display="flex";
-};
+});
 
-document.getElementById("noBtn").onmouseenter = () => {
+document.getElementById("noBtn").addEventListener('mouseenter',()=>{
   beep(.3,800,80);
-  const btn = document.getElementById("noBtn");
+  const btn=document.getElementById("noBtn");
   btn.style.position='absolute';
-  btn.style.left=Math.random()*200+"px";
-  btn.style.top=Math.random()*200+"px";
-};
+  btn.style.left=Math.random()*200+'px';
+  btn.style.top=Math.random()*200+'px';
+});
 
-document.getElementById("yesBtn").onclick = () => {
+document.getElementById("yesBtn").addEventListener('click',()=>{
   beep(.3,500,100);
   loading.style.display="block";
   let dots=0;
-  const loop=setInterval(()=>{ dots=(dots+1)%4; loading.textContent="LOADING SAVE FILE"+".".repeat(dots); },400);
+  const loop=setInterval(()=>{dots=(dots+1)%4; loading.textContent="LOADING SAVE FILE"+'.'.repeat(dots);},400);
   setTimeout(()=>{
     clearInterval(loop);
     startScreen.style.display="none";
-    mazeDiv.style.display="grid";
-    controlsDiv.style.display="grid";
+    mazeContainer.style.display="flex";
     drawMaze();
-    const music=document.getElementById("bgMusic");
-    music.volume=.4; music.play().catch(()=>{});
+    bgMusic.volume=.4; bgMusic.play().catch(()=>{});
   },2000);
+});
+
+// Maze map 10x10
+const map=[
+[0,1,0,0,0,1,0,0,0,0],
+[0,1,0,1,0,1,0,1,1,0],
+[0,0,0,1,0,0,0,0,1,0],
+[1,1,0,1,1,1,1,0,1,0],
+[0,0,0,0,0,0,1,0,0,0],
+[0,1,1,1,1,0,1,1,1,0],
+[0,0,0,0,1,0,0,0,0,0],
+[1,1,0,0,1,0,1,1,0,0],
+[0,0,0,0,0,0,0,1,0,0],
+[0,1,1,1,0,1,0,0,0,0]
+];
+
+let her={x:0,y:0};
+const me={x:9,y:9};
+
+// Draw maze
+function drawMaze(){
+  mazeDiv.innerHTML="";
+  map.forEach((r,y)=>r.forEach((c,x)=>{
+    const d=document.createElement('div');
+    d.className='cell'+(c?' wall':'');
+    if(her.x==x && her.y==y) d.innerHTML='<img class="char" src="assets/her.png">';
+    if(me.x==x && me.y==y) d.innerHTML='<img class="char" src="assets/me.png">';
+    mazeDiv.appendChild(d);
+  }));
+}
+
+// Movement
+function move(dx,dy){
+  beep(.25,650,60);
+  const nx=her.x+dx, ny=her.y+dy;
+  if(map[ny]?.[nx]===0){
+    her.x=nx; her.y=ny;
+    drawMaze();
+    if(nx==me.x && ny==me.y){
+      // Hug animation
+      const herImg = document.querySelector('.char[src="assets/her.png"]');
+      const meImg = document.querySelector('.char[src="assets/me.png"]');
+      herImg.classList.add('hug');
+      meImg.classList.add('hug');
+      beep(.4,300,200);
+    }
+  }
+}
+
+// Keyboard arrows
+document.onkeydown=e=>{
+  if(e.key=="ArrowUp") move(0,-1);
+  if(e.key=="ArrowDown") move(0,1);
+  if(e.key=="ArrowLeft") move(-1,0);
+  if(e.key=="ArrowRight") move(1,0);
 };
 </script>
 </body>
