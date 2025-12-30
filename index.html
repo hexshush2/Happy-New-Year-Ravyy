@@ -3,127 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAVY Adventure! New Year Specials</title>
+<title>FINDING AYA</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 body {
-  margin: 0;
-  padding: 0;
+  margin:0;
+  padding:0;
   font-family: 'Press Start 2P', cursive;
-  background: #222;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-  transition: opacity 0.6s ease;
+  background:#222;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
 }
 
-body::before {
+body::before{
   content:"";
   position:absolute;
   inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-image: linear-gradient(rgba(255,255,255,0.05) 1px,transparent 1px),
+                    linear-gradient(90deg,rgba(255,255,255,0.05) 1px,transparent 1px);
+  background-size:20px 20px;
   z-index:-1;
 }
 
 .sparkle {
   position: absolute;
-  width: 6px;
-  height: 6px;
-  background: #fff;
-  border-radius: 50%;
+  width: 6px; height:6px;
+  background:#fff;
+  border-radius:50%;
   animation: sparkle 1s infinite;
 }
-@keyframes sparkle {
-  0% {opacity:0; transform: scale(0.5);}
-  50% {opacity:1; transform: scale(1);}
-  100% {opacity:0; transform: scale(0.5);}
+@keyframes sparkle{
+  0%{opacity:0;transform:scale(0.5);}
+  50%{opacity:1;transform:scale(1);}
+  100%{opacity:0;transform:scale(0.5);}
 }
 
-.bmo-screen {
-  width: 400px;
-  height: 600px;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 0 20px #0f4c3d;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  background: url("https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/main/bmo-face.jpg") center/cover;
+.bmo-screen{
+  width:400px;
+  height:550px;
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 0 20px #0f4c3d;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  background:url("https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/main/bmo-face.jpg") center/cover;
 }
 
-.save-file {
-  background: rgba(0,0,0,.4);
-  padding: 12px;
-  border-radius: 10px;
+.save-file{
+  background:rgba(0,0,0,.4);
+  padding:12px;
+  border-radius:10px;
 }
 
-input {
-  width: 100%;
-  margin-top: 6px;
-  padding: 6px;
-  font-family: inherit;
+input{
+  width:100%;
+  margin-top:6px;
+  padding:6px;
+  font-family:inherit;
 }
 
-.enter-btn, .choice {
-  margin-top: 10px;
-  padding: 10px;
-  font-family: inherit;
-  background: #ffd6a5;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
+.enter-btn, .choice{
+  margin-top:10px;
+  padding:10px;
+  font-family:inherit;
+  background:#ffd6a5;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
 }
 
-.progress-bar {
-  height: 10px;
-  background: #b2f7ef;
-  margin-top: 10px;
-  border-radius: 6px;
-  overflow: hidden;
+.progress-bar{
+  height:10px;
+  background:#b2f7ef;
+  margin-top:10px;
+  border-radius:6px;
+  overflow:hidden;
 }
 
-.progress {
-  height: 100%;
-  width: 0%;
-  background: #ffaaa5;
-  transition: width 2s;
+.progress{
+  height:100%;
+  width:0%;
+  background:#ffaaa5;
+  transition:width 2s;
 }
 
-.welcome, .question, .buttons, .loading {
-  display: none;
-  margin-top: 15px;
-  text-align: center;
-  font-size: 10px;
+.welcome,.question,.buttons,.loading{
+  display:none;
+  margin-top:15px;
+  text-align:center;
+  font-size:10px;
 }
 
-.buttons {
-  display: none;
-  justify-content: space-around;
-  margin-top: auto;
+.buttons{
+  display:none;
+  justify-content:space-around;
+  margin-top:auto;
 }
 
-.maze-container {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+/* Maze */
+.maze-container{
+  display:none;
+  flex-direction:row;
+  align-items:flex-start;
+  justify-content:center;
 }
 
-.title {
-  color: #fff;
-  font-size: 16px;
-  margin-bottom: 10px;
-  text-align: center;
+.maze-wrapper{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
-.maze {
+.title{
+  color:#fff;
+  font-size:16px;
+  margin-bottom:10px;
+  text-align:center;
+}
+
+.maze{
   display:grid;
-  grid-template:repeat(15,40px)/repeat(15,40px);
+  grid-template:repeat(12,50px)/repeat(12,50px);
   gap:4px;
   background:#2a9d8f;
   padding:14px;
@@ -131,47 +135,46 @@ input {
   box-shadow:inset 0 6px #155e63,0 12px 20px rgba(0,0,0,.3);
 }
 
-.cell {
-  background:#b8fff3;
+.cell{
   border-radius:6px;
   position:relative;
 }
 
-.wall { background:#155e63; }
+.wall{ background:#155e63; }
 
-.char {
-  width:32px;
-  height:32px;
-  image-rendering: pixelated;
+.char-her, .char-me{
+  width:46px; height:46px;
   position:absolute;
-  left:4px;
-  top:4px;
-  transform: rotateX(12deg) rotateY(8deg);
-  filter: drop-shadow(0 6px 4px rgba(0,0,0,.4));
+  left:2px; top:2px;
+  border-radius:4px;
+  box-shadow:0 4px 4px rgba(0,0,0,.5);
 }
 
-.hug {
-  animation: hugAnim 1s forwards;
-}
-@keyframes hugAnim {
-  0% {transform: translate(0,0) scale(1);}
-  50% {transform: translate(-5px,-5px) scale(1.2);}
-  100% {transform: translate(0,0) scale(1);}
+.char-her{ background:#ff69b4; } /* Pink block */
+.char-me{ background:#1e90ff; } /* Blue block */
+
+.controls{
+  display:flex;
+  flex-direction:column;
+  margin-left:20px;
+  gap:10px;
 }
 
-.controls {
-  margin-top:20px;
-  display:grid;
-  grid-template:repeat(2,60px)/repeat(3,60px);
-  gap:8px;
-}
-
-.controls button {
-  font-family:inherit;
-  background:#ffd6a5;
+.controls button{
+  width:60px; height:60px;
+  border-radius:12px;
   border:none;
-  border-radius:14px;
+  cursor:pointer;
+  font-size:16px;
+  font-family:inherit;
+  color:#fff;
 }
+
+.up{ background:#3498db; }
+.down{ background:#f1c40f; }
+.left{ background:#e74c3c; }
+.right{ background:#2ecc71; }
+
 </style>
 </head>
 <body>
@@ -186,25 +189,26 @@ input {
     <div class="progress-bar"><div class="progress" id="progress"></div></div>
   </div>
 
-  <div class="welcome" id="welcome">I’VE LONG BEEN WAITING FOR YOU PO HIHI</div>
-  <div class="question" id="question">START NOW, BABE?</div>
+  <div class="welcome" id="welcome">I’VE LONG BEEN WAITING FOR YOU</div>
+  <div class="question" id="question">START NOW?</div>
   <div class="buttons" id="buttons">
     <button class="choice" id="yesBtn">YES</button>
     <button class="choice" id="noBtn">NO</button>
   </div>
-  <div class="loading" id="loading">LOADING PO, BABY! WAIT WAIT...</div>
+  <div class="loading" id="loading">LOADING SAVE FILE...</div>
 </div>
 
 <!-- Maze -->
 <div class="maze-container" id="mazeContainer">
-  <div class="title">FINDING AYA</div>
-  <div class="maze" id="maze"></div>
-  <div class="controls" id="controls">
-    <div></div><button onclick="move(0,-1)">⬆</button><div></div>
-    <button onclick="move(-1,0)">⬅</button>
-    <button onclick="move(1,0)">➡</button>
-    <div></div>
-    <button onclick="move(0,1)">⬇</button><div></div>
+  <div class="maze-wrapper">
+    <div class="title">FINDING AYA</div>
+    <div class="maze" id="maze"></div>
+  </div>
+  <div class="controls">
+    <button class="up" onclick="move(0,-1)">⬆</button>
+    <button class="left" onclick="move(-1,0)">⬅</button>
+    <button class="right" onclick="move(1,0)">➡</button>
+    <button class="down" onclick="move(0,1)">⬇</button>
   </div>
 </div>
 
@@ -244,7 +248,6 @@ const startScreen = document.getElementById("startScreen");
 
 const mazeContainer = document.getElementById("mazeContainer");
 const mazeDiv = document.getElementById("maze");
-const controlsDiv = document.getElementById("controls");
 const bgMusic = document.getElementById("bgMusic");
 
 // Typing sound
@@ -260,6 +263,7 @@ enterBtn.addEventListener('click',()=>{
   buttons.style.display="flex";
 });
 
+// NO button
 document.getElementById("noBtn").addEventListener('mouseenter',()=>{
   beep(.3,800,80);
   const btn=document.getElementById("noBtn");
@@ -268,6 +272,7 @@ document.getElementById("noBtn").addEventListener('mouseenter',()=>{
   btn.style.top=Math.random()*200+'px';
 });
 
+// YES button
 document.getElementById("yesBtn").addEventListener('click',()=>{
   beep(.3,500,100);
   loading.style.display="block";
@@ -278,58 +283,45 @@ document.getElementById("yesBtn").addEventListener('click',()=>{
     startScreen.style.display="none";
     mazeContainer.style.display="flex";
     drawMaze();
-    bgMusic.volume=.4; bgMusic.play().catch(()=>{});
+    bgMusic.volume=.4;
+    bgMusic.play().catch(()=>{});
   },2000);
 });
 
-// Maze map 15x15 (more complex)
+// Maze map 12x12 complex
 const map=[
-[0,1,0,0,0,1,0,0,1,0,1,0,0,0,0],
-[0,1,0,1,0,1,0,1,1,0,1,0,1,1,0],
-[0,0,0,1,0,0,0,0,1,0,0,0,1,0,0],
-[1,1,0,1,1,1,1,0,1,0,1,1,0,1,0],
-[0,0,0,0,0,0,1,0,0,0,1,0,0,0,0],
-[0,1,1,1,1,0,1,1,1,0,1,0,1,1,0],
-[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0],
-[1,1,0,0,1,0,1,1,0,1,1,0,1,0,0],
-[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
-[0,1,1,1,0,1,0,0,0,1,1,0,1,1,0],
-[0,0,0,1,0,0,0,1,0,0,0,0,0,0,0],
-[1,0,1,1,1,0,1,1,0,1,0,1,1,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
-[0,1,1,1,0,1,0,1,1,0,1,0,1,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+[0,1,0,0,0,1,0,0,1,0,1,0],
+[0,1,0,1,0,1,0,1,1,0,1,0],
+[0,0,0,1,0,0,0,0,1,0,0,0],
+[1,1,0,1,1,1,1,0,1,0,1,0],
+[0,0,0,0,0,0,1,0,0,0,1,0],
+[0,1,1,1,1,0,1,1,1,0,1,0],
+[0,0,0,0,1,0,0,0,0,0,0,0],
+[1,1,0,0,1,0,1,1,0,1,1,0],
+[0,0,0,0,0,0,0,1,0,0,0,0],
+[0,1,1,1,0,1,0,0,0,1,1,0],
+[0,0,0,1,0,0,0,1,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0]
 ];
 
 let her={x:0,y:0};
-const me={x:14,y:14};
+const me={x:11,y:11};
 
 function drawMaze(){
   mazeDiv.innerHTML="";
   map.forEach((r,y)=>r.forEach((c,x)=>{
     const d=document.createElement('div');
     d.className='cell'+(c?' wall':'');
-    
-    // HER character
     if(her.x==x && her.y==y){
-      const img=document.createElement('img');
-      img.src="assets/her.jpg";
-      img.className="char";
-      img.style.transform="rotateX(12deg) rotateY(10deg) scale(1.1)";
-      img.style.filter="drop-shadow(0 6px 4px rgba(0,0,0,.4))";
-      d.appendChild(img);
+      const div=document.createElement('div');
+      div.className='char-her';
+      d.appendChild(div);
     }
-    
-    // ME character
     if(me.x==x && me.y==y){
-      const img=document.createElement('img');
-      img.src="assets/me.jpg";
-      img.className="char";
-      img.style.transform="rotateX(12deg) rotateY(10deg) scale(1.1)";
-      img.style.filter="drop-shadow(0 6px 4px rgba(0,0,0,.4))";
-      d.appendChild(img);
+      const div=document.createElement('div');
+      div.className='char-me';
+      d.appendChild(div);
     }
-
     mazeDiv.appendChild(d);
   }));
 }
@@ -340,14 +332,14 @@ function move(dx,dy){
   if(map[ny]?.[nx]===0){
     her.x=nx; her.y=ny;
     drawMaze();
-
-    // Hug animation when HER reaches ME
     if(nx==me.x && ny==me.y){
-      const chars=document.querySelectorAll('.char');
-      chars.forEach(c=>{
-        c.style.transition="transform 0.6s";
-        c.style.transform="rotateX(0deg) rotateY(0deg) scale(1.3)";
-      });
+      // Hug animation
+      const herDiv=document.querySelector('.char-her');
+      const meDiv=document.querySelector('.char-me');
+      herDiv.style.transition="transform 0.6s";
+      meDiv.style.transition="transform 0.6s";
+      herDiv.style.transform="scale(1.4)";
+      meDiv.style.transform="scale(1.4)";
       beep(.4,300,200);
     }
   }
