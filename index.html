@@ -24,7 +24,6 @@ body::before{
   background-size:20px 20px;
   z-index:-1;
 }
-
 .bmo-screen{
   width:90vw; max-width:400px;
   height:70vh; max-height:500px;
@@ -33,7 +32,6 @@ body::before{
   color:#fff; display:flex; flex-direction:column;
   background:url("https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/bmo-face.jpg") center/cover;
 }
-
 .save-file{ background:rgba(0,0,0,.4); padding:12px; border-radius:10px; }
 input{ width:100%; margin-top:6px; padding:6px; font-family:inherit; }
 .enter-btn, .choice{ margin-top:10px; padding:10px; font-family:inherit; background:#ffd6a5; border:none; border-radius:10px; cursor:pointer; }
@@ -97,6 +95,7 @@ input{ width:100%; margin-top:6px; padding:6px; font-family:inherit; }
 </head>
 <body>
 
+<!-- Start Screen -->
 <div class="bmo-screen" id="startScreen">
   <div class="save-file">
     SAVE FILE 01: FINDING AYA<br><br>
@@ -114,6 +113,7 @@ input{ width:100%; margin-top:6px; padding:6px; font-family:inherit; }
   <div class="loading" id="loading">LOADING PO, BABY HIHI...</div>
 </div>
 
+<!-- Maze -->
 <div class="maze-container" id="mazeContainer">
   <div class="title">FINDING AYA</div>
   <div class="maze" id="maze"></div>
@@ -137,6 +137,23 @@ function beep(v,f,d){
   o.start(); o.stop(c.currentTime+d/1000);
 }
 
+// Play sound helper
+function playSound(url, volume=0.5){
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  fetch(url)
+    .then(r=>r.arrayBuffer())
+    .then(b=>ctx.decodeAudioData(b))
+    .then(buffer=>{
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      const gainNode = ctx.createGain();
+      gainNode.gain.value = volume;
+      src.connect(gainNode).connect(ctx.destination);
+      src.start();
+    });
+}
+
+// Elements
 const nameInput = document.getElementById("playerName");
 const enterBtn = document.getElementById("enterBtn");
 const welcome = document.getElementById("welcome");
@@ -150,8 +167,10 @@ const mazeDiv = document.getElementById("maze");
 const bgMusic = document.getElementById("bgMusic");
 const heart = document.getElementById("heart");
 
+// Typing sound
 nameInput.addEventListener('keydown',()=>beep(.2,600,50));
 
+// Start screen
 enterBtn.addEventListener('click',()=>{
   if(!nameInput.value.trim()) return;
   beep(.3,400,100);
@@ -161,6 +180,7 @@ enterBtn.addEventListener('click',()=>{
   buttons.style.display="flex";
 });
 
+// NO button
 document.getElementById("noBtn").addEventListener('mouseenter',()=>{
   beep(.3,800,80);
   const btn=document.getElementById("noBtn");
@@ -169,6 +189,7 @@ document.getElementById("noBtn").addEventListener('mouseenter',()=>{
   btn.style.top=Math.random()*200+'px';
 });
 
+// YES button
 document.getElementById("yesBtn").addEventListener('click',()=>{
   beep(.3,500,100);
   loading.style.display="block";
@@ -184,7 +205,7 @@ document.getElementById("yesBtn").addEventListener('click',()=>{
   },2000);
 });
 
-// Maze
+// Maze map
 const map=[
 [1,1,1,1,1,1,1,1,1,1,1,1],
 [1,0,0,0,1,0,0,0,1,0,0,1],
@@ -224,18 +245,41 @@ function drawMaze(){
   }));
 }
 
+// Move + end sequence
 function move(dx,dy){
   beep(.25,650,60);
   const nx=her.x+dx, ny=her.y+dy;
   if(map[ny]?.[nx]===0){
     her.x=nx; her.y=ny;
     drawMaze();
+
     if(nx==me.x && ny==me.y){
+      // Zoom in
+      mazeContainer.style.transition="transform 1s";
+      mazeContainer.style.transform="scale(1.4)";
+
+      // Show heart
+      heart.style.backgroundImage="url('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/heart.PNG')";
       heart.style.opacity=1;
-      heart.style.transition="transform 1s";
-      heart.style.transform="translate(-50%,-50%) scale(2)";
+      heart.style.transition="transform 0.6s";
+      heart.style.transform="translate(-50%,-50%) scale(1.8)";
+
+      // Heartbeat sound loop
+      const beatInterval = setInterval(()=>playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/heart-beat.mp3',0.3),300);
+
+      // Kiss and fireworks sounds
+      playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/kiss.mp3',0.5);
+      playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/fireworks.mp3',0.5);
+
+      // Fireworks visuals
       createFireworks();
-      setTimeout(()=>{ alert("YAYYY! HAPPY NEW YEAR BABY KO HIHI"); },1500);
+
+      setTimeout(()=>{
+        clearInterval(beatInterval);
+        heart.style.opacity=0;
+        mazeContainer.style.transform="scale(1)";
+        alert("YAYYY! HAPPY NEW YEAR BABY KO HIHI");
+      },2000);
     }
   }
 }
@@ -247,14 +291,18 @@ document.onkeydown=e=>{
   if(e.key=="ArrowRight") move(1,0);
 };
 
-// Fireworks
+// Fireworks visuals
 function createFireworks(){
-  for(let i=0;i<100;i++){
+  for(let i=0;i<20;i++){
     const f=document.createElement('div');
     f.classList.add('firework');
-    f.style.backgroundColor=['red','pink','yellow','white'][Math.floor(Math.random()*4)];
-    f.style.left=(50+Math.cos(i/100*6.28)*50)+'%';
-    f.style.top=(50+Math.sin(i/100*6.28)*50)+'%';
+    f.style.backgroundImage="url('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/fireworks.PNG')";
+    f.style.backgroundSize="contain";
+    f.style.backgroundRepeat="no-repeat";
+    f.style.left=(Math.random()*80+10)+'%';
+    f.style.top=(Math.random()*80+10)+'%';
+    f.style.width='40px';
+    f.style.height='40px';
     mazeContainer.appendChild(f);
     setTimeout(()=>f.remove(),1500);
   }
