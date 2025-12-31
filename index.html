@@ -82,20 +82,20 @@ input{ width:100%; margin-top:6px; padding:6px; font-family:inherit; }
 .left{ background:#e74c3c; grid-column:1; grid-row:2; }
 .right{ background:#2ecc71; grid-column:3; grid-row:2; }
 
-.heart{ position:absolute; width:50px; height:50px; left:50%; top:50%; transform:translate(-50%,-50%); background:red; clip-path: polygon(50% 0%, 61% 14%, 75% 14%, 86% 25%, 86% 38%, 75% 50%, 50% 100%, 25% 50%, 14% 38%, 14% 25%, 25% 14%, 39% 14%); opacity:0; transition: all 1s ease; z-index:10; }
-
-.firework{
-  position:absolute; width:8px; height:8px;
-  border-radius:50%;
-  background:red;
-  pointer-events:none;
+/* Effect images */
+.effect-image{
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  opacity:0;
+  transition: opacity 0.8s, transform 0.8s;
+  max-width:100px; max-height:100px;
   z-index:10;
 }
 </style>
 </head>
 <body>
 
-<!-- Start Screen -->
 <div class="bmo-screen" id="startScreen">
   <div class="save-file">
     SAVE FILE 01: FINDING AYA<br><br>
@@ -113,7 +113,6 @@ input{ width:100%; margin-top:6px; padding:6px; font-family:inherit; }
   <div class="loading" id="loading">LOADING PO, BABY HIHI...</div>
 </div>
 
-<!-- Maze -->
 <div class="maze-container" id="mazeContainer">
   <div class="title">FINDING AYA</div>
   <div class="maze" id="maze"></div>
@@ -125,8 +124,14 @@ input{ width:100%; margin-top:6px; padding:6px; font-family:inherit; }
   </div>
 </div>
 
-<div class="heart" id="heart"></div>
-<audio id="bgMusic" loop><source src="love-like-you.mp3" type="audio/mpeg"></audio>
+<!-- Heart, Fireworks, Kiss -->
+<img src="https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/heart.PNG" class="effect-image" id="heartEffect">
+<img src="https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/fireworks.PNG" class="effect-image" id="fireworkEffect">
+<img src="https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/kiss.PNG" class="effect-image" id="kissEffect">
+
+<audio id="bgMusic" loop>
+  <source src="love-like-you.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 // Beep
@@ -165,9 +170,12 @@ const startScreen = document.getElementById("startScreen");
 const mazeContainer = document.getElementById("mazeContainer");
 const mazeDiv = document.getElementById("maze");
 const bgMusic = document.getElementById("bgMusic");
-const heart = document.getElementById("heart");
 
-// Typing sound
+const heartEffect = document.getElementById("heartEffect");
+const fireworkEffect = document.getElementById("fireworkEffect");
+const kissEffect = document.getElementById("kissEffect");
+
+// Typing beep
 nameInput.addEventListener('keydown',()=>beep(.2,600,50));
 
 // Start screen
@@ -180,7 +188,6 @@ enterBtn.addEventListener('click',()=>{
   buttons.style.display="flex";
 });
 
-// NO button
 document.getElementById("noBtn").addEventListener('mouseenter',()=>{
   beep(.3,800,80);
   const btn=document.getElementById("noBtn");
@@ -189,7 +196,6 @@ document.getElementById("noBtn").addEventListener('mouseenter',()=>{
   btn.style.top=Math.random()*200+'px';
 });
 
-// YES button
 document.getElementById("yesBtn").addEventListener('click',()=>{
   beep(.3,500,100);
   loading.style.display="block";
@@ -245,41 +251,46 @@ function drawMaze(){
   }));
 }
 
-// Move + end sequence
+// Move function
 function move(dx,dy){
   beep(.25,650,60);
   const nx=her.x+dx, ny=her.y+dy;
   if(map[ny]?.[nx]===0){
     her.x=nx; her.y=ny;
     drawMaze();
-
     if(nx==me.x && ny==me.y){
-      // Zoom in
-      mazeContainer.style.transition="transform 1s";
-      mazeContainer.style.transform="scale(1.4)";
-
-      // Show heart
-      heart.style.backgroundImage="url('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/heart.PNG')";
-      heart.style.opacity=1;
-      heart.style.transition="transform 0.6s";
-      heart.style.transform="translate(-50%,-50%) scale(1.8)";
-
-      // Heartbeat sound loop
-      const beatInterval = setInterval(()=>playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/heart-beat.mp3',0.3),300);
-
-      // Kiss and fireworks sounds
-      playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/kiss.mp3',0.5);
-      playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/fireworks.mp3',0.5);
-
-      // Fireworks visuals
-      createFireworks();
+      // Step 1: Heart
+      heartEffect.style.opacity=1;
+      heartEffect.style.transform="translate(-50%,-50%) scale(1.5)";
+      playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/heart-beat.mp3',0.3);
 
       setTimeout(()=>{
-        clearInterval(beatInterval);
-        heart.style.opacity=0;
-        mazeContainer.style.transform="scale(1)";
-        alert("YAYYY! HAPPY NEW YEAR BABY KO HIHI");
-      },2000);
+        // Step 2: Fireworks
+        fireworkEffect.style.opacity=1;
+        fireworkEffect.style.transform="translate(-50%,-50%) scale(2)";
+        playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/fireworks.mp3',0.5);
+
+        setTimeout(()=>{
+          // Step 3: Kiss
+          fireworkEffect.style.opacity=0;
+          kissEffect.style.opacity=1;
+          kissEffect.style.transform="translate(-50%,-50%) scale(1.8)";
+          playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/kiss.mp3',0.5);
+
+          setTimeout(()=>{
+            alert("YAYYY! HAPPY NEW YEAR, BABY HIHI");
+            // Reset maze and effects
+            her={x:1,y:1};
+            drawMaze();
+            heartEffect.style.opacity=0;
+            heartEffect.style.transform="translate(-50%,-50%) scale(0)";
+            kissEffect.style.opacity=0;
+            kissEffect.style.transform="translate(-50%,-50%) scale(0)";
+            mazeContainer.style.display="none";
+            startScreen.style.display="flex";
+          },1500);
+        },1500);
+      },1500);
     }
   }
 }
@@ -290,23 +301,6 @@ document.onkeydown=e=>{
   if(e.key=="ArrowLeft") move(-1,0);
   if(e.key=="ArrowRight") move(1,0);
 };
-
-// Fireworks visuals
-function createFireworks(){
-  for(let i=0;i<20;i++){
-    const f=document.createElement('div');
-    f.classList.add('firework');
-    f.style.backgroundImage="url('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/fireworks.PNG')";
-    f.style.backgroundSize="contain";
-    f.style.backgroundRepeat="no-repeat";
-    f.style.left=(Math.random()*80+10)+'%';
-    f.style.top=(Math.random()*80+10)+'%';
-    f.style.width='40px';
-    f.style.height='40px';
-    mazeContainer.appendChild(f);
-    setTimeout(()=>f.remove(),1500);
-  }
-}
 </script>
 </body>
 </html>
