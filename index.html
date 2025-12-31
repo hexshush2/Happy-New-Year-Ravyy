@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAVY Adventure</title>
+<title>FINDING AYA - RAVY Adventure</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 body {
-  margin:0;
-  padding:0;
+  margin:0; padding:0;
   font-family: 'Press Start 2P', cursive;
   background:#222;
   display:flex;
@@ -17,207 +16,87 @@ body {
   height:100vh;
   overflow:hidden;
 }
-
 body::before{
   content:"";
-  position:absolute;
-  inset:0;
+  position:absolute; inset:0;
   background-image: linear-gradient(rgba(255,255,255,0.05) 1px,transparent 1px),
                     linear-gradient(90deg,rgba(255,255,255,0.05) 1px,transparent 1px);
   background-size:20px 20px;
   z-index:-1;
 }
 
-.sparkle {
-  position: absolute;
-  width: 6px; height:6px;
-  background:#fff;
-  border-radius:50%;
-  animation: sparkle 1s infinite;
-}
-@keyframes sparkle{
-  0%{opacity:0;transform:scale(0.5);}
-  50%{opacity:1;transform:scale(1);}
-  100%{opacity:0;transform:scale(0.5);}
-}
-
 .bmo-screen{
-  width:400px;
-  height:550px;
-  border-radius:20px;
-  padding:20px;
+  width:90vw; max-width:400px;
+  height:70vh; max-height:500px;
+  border-radius:20px; padding:20px;
   box-shadow:0 0 20px #0f4c3d;
-  color:#fff;
-  display:flex;
-  flex-direction:column;
-  background:url("https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/main/bmo-face.jpg") center/cover;
+  color:#fff; display:flex; flex-direction:column;
+  background:url("https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/bmo-face.jpg") center/cover;
 }
 
-.save-file{
-  background:rgba(0,0,0,.4);
-  padding:12px;
-  border-radius:10px;
-}
+.save-file{ background:rgba(0,0,0,.4); padding:12px; border-radius:10px; }
+input{ width:100%; margin-top:6px; padding:6px; font-family:inherit; }
+.enter-btn, .choice{ margin-top:10px; padding:10px; font-family:inherit; background:#ffd6a5; border:none; border-radius:10px; cursor:pointer; }
+.progress-bar{ height:10px; background:#b2f7ef; margin-top:10px; border-radius:6px; overflow:hidden; }
+.progress{ height:100%; width:0%; background:#ffaaa5; transition:width 2s; }
+.welcome,.question,.buttons,.loading{ display:none; margin-top:15px; text-align:center; font-size:10px; }
+.buttons{ display:none; justify-content:space-around; margin-top:auto; }
 
-input{
-  width:100%;
-  margin-top:6px;
-  padding:6px;
-  font-family:inherit;
-}
-
-.enter-btn, .choice{
-  margin-top:10px;
-  padding:10px;
-  font-family:inherit;
-  background:#ffd6a5;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.progress-bar{
-  height:10px;
-  background:#b2f7ef;
-  margin-top:10px;
-  border-radius:6px;
-  overflow:hidden;
-}
-
-.progress{
-  height:100%;
-  width:0%;
-  background:#ffaaa5;
-  transition:width 2s;
-}
-
-.welcome,.question,.buttons,.loading{
-  display:none;
-  margin-top:15px;
-  text-align:center;
-  font-size:10px;
-}
-
-.buttons{
-  display:none;
-  justify-content:space-around;
-  margin-top:auto;
-}
-
-/* Maze */
-.maze-container{
-  display:none;
-  flex-direction:row;
-  align-items:flex-start;
-  justify-content:center;
-  position:relative;
-  width:100%;
-  max-width:700px;
-}
-
-.maze-wrapper{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  position:relative;
-}
-
-.title{
-  color:#fff;
-  font-size:16px;
-  margin-bottom:10px;
-  text-align:center;
-}
+.maze-container{ display:none; flex-direction:column; align-items:center; justify-content:center; width:90vw; max-width:400px; position:relative; }
+.title{ color:#fff; font-size:16px; margin-bottom:10px; text-align:center; }
 
 .maze{
   display:grid;
-  grid-template:repeat(16,40px)/repeat(16,40px);
-  gap:3px;
+  gap:2px;
+  width:90vw; max-width:350px;
+  grid-template-columns: repeat(12,1fr);
+  grid-template-rows: repeat(12,1fr);
   background:#2a9d8f;
-  padding:10px;
   border-radius:20px;
-  box-shadow:inset 0 6px #155e63,0 12px 20px rgba(0,0,0,.3);
-}
-
-.cell{
-  border-radius:4px;
   position:relative;
 }
 
+.cell{ position:relative; border-radius:4px; width:100%; height:0; padding-bottom:100%; }
 .wall{ background:#155e63; }
 
 .char-her, .char-me{
-  width:36px; height:36px;
-  position:absolute;
-  left:2px; top:2px;
-  border-radius:4px;
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background-size:cover; background-position:center;
   box-shadow:0 4px 4px rgba(0,0,0,.5);
-  background-size:cover;
-  background-position:center;
+  border-radius:6px;
 }
-
-.char-her{ background-image:url('her.PNG'); }
-.char-me{ background-image:url('me.PNG'); }
 
 .controls{
-  position:absolute;
-  width:100%;
-  display:flex;
-  justify-content:center;
-  margin-top:10px;
-}
-
-.star-controls{
   position:absolute;
   top:50%; left:50%;
   transform:translate(-50%,-50%);
   display:grid;
-  grid-template:50px 50px / 50px 50px;
-  gap:10px;
+  grid-template-columns:repeat(3,50px);
+  grid-template-rows:repeat(3,50px);
+  gap:5px;
+  z-index:5;
 }
+.controls button{
+  width:50px; height:50px; border:none; border-radius:12px; cursor:pointer; font-size:16px; font-family:inherit; color:#fff;
+}
+.up{ background:#3498db; grid-column:2; grid-row:1; }
+.down{ background:#f1c40f; grid-column:2; grid-row:3; }
+.left{ background:#e74c3c; grid-column:1; grid-row:2; }
+.right{ background:#2ecc71; grid-column:3; grid-row:2; }
 
-.star-controls button{
-  width:50px;
-  height:50px;
+.heart{ position:absolute; width:50px; height:50px; left:50%; top:50%; transform:translate(-50%,-50%); background:red; clip-path: polygon(50% 0%, 61% 14%, 75% 14%, 86% 25%, 86% 38%, 75% 50%, 50% 100%, 25% 50%, 14% 38%, 14% 25%, 25% 14%, 39% 14%); opacity:0; transition: all 1s ease; z-index:10; }
+
+.firework{
+  position:absolute; width:8px; height:8px;
   border-radius:50%;
-  border:none;
-  cursor:pointer;
-  font-size:20px;
-  font-family:inherit;
-  color:#fff;
-}
-
-.up{ background:#3498db; grid-column:2; grid-row:1;}
-.down{ background:#f1c40f; grid-column:2; grid-row:2;}
-.left{ background:#e74c3c; grid-column:1; grid-row:2;}
-.right{ background:#2ecc71; grid-column:2; grid-row:2;}
-
-/* Heart & message */
-.heart{
-  position:absolute;
-  width:50px; height:50px;
   background:red;
-  clip-path: polygon(50% 0%, 61% 9%, 68% 18%, 75% 27%, 75% 37%, 68% 47%, 50% 60%, 32% 47%, 25% 37%, 25% 27%, 32% 18%, 39% 9%);
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%) scale(0);
-  z-index:10;
-}
-.message{
-  position:absolute;
-  color:#fff;
-  font-size:14px;
-  top:60%;
-  left:50%;
-  transform:translateX(-50%);
-  opacity:0;
+  pointer-events:none;
   z-index:10;
 }
 </style>
 </head>
 <body>
 
-<!-- Start Screen -->
 <div class="bmo-screen" id="startScreen">
   <div class="save-file">
     SAVE FILE 01: FINDING AYA<br><br>
@@ -226,7 +105,6 @@ input{
     <button class="enter-btn" id="enterBtn">ENTER</button>
     <div class="progress-bar"><div class="progress" id="progress"></div></div>
   </div>
-
   <div class="welcome" id="welcome">I’VE LONG BEEN WAITING FOR YOU PO HIHI</div>
   <div class="question" id="question">START NOW PO?</div>
   <div class="buttons" id="buttons">
@@ -236,28 +114,22 @@ input{
   <div class="loading" id="loading">LOADING PO, BABY HIHI...</div>
 </div>
 
-<!-- Maze -->
 <div class="maze-container" id="mazeContainer">
-  <div class="maze-wrapper">
-    <div class="title">FINDING AYA</div>
-    <div class="maze" id="maze"></div>
-  </div>
-  <div class="star-controls">
+  <div class="title">FINDING AYA</div>
+  <div class="maze" id="maze"></div>
+  <div class="controls">
     <button class="up" onclick="move(0,-1)">⬆</button>
-    <button class="down" onclick="move(0,1)">⬇</button>
     <button class="left" onclick="move(-1,0)">⬅</button>
     <button class="right" onclick="move(1,0)">➡</button>
+    <button class="down" onclick="move(0,1)">⬇</button>
   </div>
-  <div class="heart" id="heart"></div>
-  <div class="message" id="message">YAYYY! HAPPY NEW YEAR BABY KO HIHI</div>
 </div>
 
-<audio id="bgMusic" loop>
-  <source src="love-like-you.mp3" type="audio/mpeg">
-</audio>
+<div class="heart" id="heart"></div>
+<audio id="bgMusic" loop><source src="love-like-you.mp3" type="audio/mpeg"></audio>
 
 <script>
-// Beep function
+// Beep
 function beep(v,f,d){
   const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();
   o.connect(g); g.connect(c.destination);
@@ -265,18 +137,6 @@ function beep(v,f,d){
   o.start(); o.stop(c.currentTime+d/1000);
 }
 
-// Sparkles
-function createSparkle(){
-  const s=document.createElement('div');
-  s.classList.add('sparkle');
-  s.style.left=Math.random()*window.innerWidth+'px';
-  s.style.top=Math.random()*window.innerHeight+'px';
-  document.body.appendChild(s);
-  setTimeout(()=>s.remove(),1000);
-}
-setInterval(createSparkle, 300);
-
-// Elements
 const nameInput = document.getElementById("playerName");
 const enterBtn = document.getElementById("enterBtn");
 const welcome = document.getElementById("welcome");
@@ -289,12 +149,9 @@ const mazeContainer = document.getElementById("mazeContainer");
 const mazeDiv = document.getElementById("maze");
 const bgMusic = document.getElementById("bgMusic");
 const heart = document.getElementById("heart");
-const message = document.getElementById("message");
 
-// Typing beep
 nameInput.addEventListener('keydown',()=>beep(.2,600,50));
 
-// Start screen
 enterBtn.addEventListener('click',()=>{
   if(!nameInput.value.trim()) return;
   beep(.3,400,100);
@@ -304,7 +161,6 @@ enterBtn.addEventListener('click',()=>{
   buttons.style.display="flex";
 });
 
-// NO button
 document.getElementById("noBtn").addEventListener('mouseenter',()=>{
   beep(.3,800,80);
   const btn=document.getElementById("noBtn");
@@ -313,7 +169,6 @@ document.getElementById("noBtn").addEventListener('mouseenter',()=>{
   btn.style.top=Math.random()*200+'px';
 });
 
-// YES button
 document.getElementById("yesBtn").addEventListener('click',()=>{
   beep(.3,500,100);
   loading.style.display="block";
@@ -329,28 +184,24 @@ document.getElementById("yesBtn").addEventListener('click',()=>{
   },2000);
 });
 
-// Maze map 16x16 complex
+// Maze
 const map=[
-[0,1,0,0,0,1,0,0,1,0,1,0,0,1,0,0],
-[0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0],
-[0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0],
-[1,1,0,1,1,1,1,0,1,0,1,0,1,1,1,0],
-[0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0],
-[0,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0],
-[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
-[1,1,0,0,1,0,1,1,0,1,1,1,0,1,1,0],
-[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
-[0,1,1,1,0,1,1,0,1,1,1,0,1,1,1,0],
-[0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0],
-[0,0,0,0,1,1,0,0,0,0,1,0,0,0,1,0],
-[0,0,1,0,1,0,0,1,0,1,0,0,1,0,0,0],
-[0,1,0,0,0,0,1,0,0,0,1,0,0,1,0,0],
-[0,0,0,1,1,0,0,1,0,1,0,0,1,1,0,0],
-[1,0,0,0,0,1,0,0,1,0,1,0,0,0,0,0]
+[1,1,1,1,1,1,1,1,1,1,1,1],
+[1,0,0,0,1,0,0,0,1,0,0,1],
+[1,0,1,0,1,0,1,0,1,0,1,1],
+[1,0,1,0,0,0,1,0,0,0,0,1],
+[1,0,1,1,1,0,1,1,1,0,1,1],
+[1,0,0,0,0,0,0,0,1,0,0,1],
+[1,0,1,1,1,0,1,1,1,0,1,1],
+[1,0,0,0,0,0,0,0,0,0,0,1],
+[1,0,1,0,1,1,1,0,1,0,1,1],
+[1,0,0,0,1,0,0,0,1,0,0,1],
+[1,0,1,0,0,0,1,0,0,0,0,1],
+[1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
-let her={x:0,y:0};
-const me={x:15,y:15};
+let her={x:1,y:1};
+const me={x:10,y:10};
 
 function drawMaze(){
   mazeDiv.innerHTML="";
@@ -360,18 +211,19 @@ function drawMaze(){
     if(her.x==x && her.y==y){
       const div=document.createElement('div');
       div.className='char-her';
+      div.style.backgroundImage='url(https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/her.PNG)';
       d.appendChild(div);
     }
     if(me.x==x && me.y==y){
       const div=document.createElement('div');
       div.className='char-me';
+      div.style.backgroundImage='url(https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/me.PNG)';
       d.appendChild(div);
     }
     mazeDiv.appendChild(d);
   }));
 }
 
-// Move function
 function move(dx,dy){
   beep(.25,650,60);
   const nx=her.x+dx, ny=her.y+dy;
@@ -379,13 +231,11 @@ function move(dx,dy){
     her.x=nx; her.y=ny;
     drawMaze();
     if(nx==me.x && ny==me.y){
-      // Show heart & message
-      heart.style.transition="transform 0.8s";
-      heart.style.transform="translate(-50%,-50%) scale(1.5)";
-      message.style.transition="opacity 1s";
-      message.style.opacity=1;
-      // Fireworks after delay
-      setTimeout(()=>fireworksSequence(),1000);
+      heart.style.opacity=1;
+      heart.style.transition="transform 1s";
+      heart.style.transform="translate(-50%,-50%) scale(2)";
+      createFireworks();
+      setTimeout(()=>{ alert("YAYYY! HAPPY NEW YEAR BABY KO HIHI"); },1500);
     }
   }
 }
@@ -397,49 +247,17 @@ document.onkeydown=e=>{
   if(e.key=="ArrowRight") move(1,0);
 };
 
-// Simple fireworks animation
-function fireworksSequence(){
-  const canvas=document.createElement('canvas');
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
-  canvas.style.position='absolute';
-  canvas.style.top=0;
-  canvas.style.left=0;
-  canvas.style.zIndex=20;
-  document.body.appendChild(canvas);
-  const ctx=canvas.getContext('2d');
-
-  const particles=[];
-  for(let i=0;i<200;i++){
-    particles.push({
-      x:window.innerWidth/2,
-      y:window.innerHeight/2,
-      vx:(Math.random()-0.5)*8,
-      vy:(Math.random()-0.5)*8,
-      color:`hsl(${Math.random()*360},100%,60%)`,
-      life:100
-    });
+// Fireworks
+function createFireworks(){
+  for(let i=0;i<100;i++){
+    const f=document.createElement('div');
+    f.classList.add('firework');
+    f.style.backgroundColor=['red','pink','yellow','white'][Math.floor(Math.random()*4)];
+    f.style.left=(50+Math.cos(i/100*6.28)*50)+'%';
+    f.style.top=(50+Math.sin(i/100*6.28)*50)+'%';
+    mazeContainer.appendChild(f);
+    setTimeout(()=>f.remove(),1500);
   }
-
-  function animate(){
-    ctx.fillStyle='rgba(0,0,0,0.1)';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    particles.forEach(p=>{
-      ctx.fillStyle=p.color;
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,3,0,Math.PI*2);
-      ctx.fill();
-      p.x+=p.vx;
-      p.y+=p.vy;
-      p.life--;
-    });
-    if(particles.some(p=>p.life>0)){
-      requestAnimationFrame(animate);
-    } else {
-      canvas.remove();
-    }
-  }
-  animate();
 }
 </script>
 </body>
