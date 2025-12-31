@@ -6,32 +6,9 @@
 <title>FINDING AYA - RAVY Adventure</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
-body {
-  margin:0; padding:0;
-  font-family: 'Press Start 2P', cursive;
-  background:#222;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  overflow:hidden;
-}
-body::before{
-  content:"";
-  position:absolute; inset:0;
-  background-image: linear-gradient(rgba(255,255,255,0.05) 1px,transparent 1px),
-                    linear-gradient(90deg,rgba(255,255,255,0.05) 1px,transparent 1px);
-  background-size:20px 20px;
-  z-index:-1;
-}
-.bmo-screen{
-  width:90vw; max-width:400px;
-  height:70vh; max-height:500px;
-  border-radius:20px; padding:20px;
-  box-shadow:0 0 20px #0f4c3d;
-  color:#fff; display:flex; flex-direction:column;
-  background:url("https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/bmo-face.jpg") center/cover;
-}
+body { margin:0; padding:0; font-family: 'Press Start 2P', cursive; background:#222; display:flex; justify-content:center; align-items:center; height:100vh; overflow:hidden;}
+body::before{ content:""; position:absolute; inset:0; background-image: linear-gradient(rgba(255,255,255,0.05) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.05) 1px,transparent 1px); background-size:20px 20px; z-index:-1;}
+.bmo-screen{ width:90vw; max-width:400px; height:70vh; max-height:500px; border-radius:20px; padding:20px; box-shadow:0 0 20px #0f4c3d; color:#fff; display:flex; flex-direction:column; background:url("https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/bmo-face.jpg") center/cover;}
 .save-file{ background:rgba(0,0,0,.4); padding:12px; border-radius:10px; }
 input{ width:100%; margin-top:6px; padding:6px; font-family:inherit; }
 .enter-btn, .choice{ margin-top:10px; padding:10px; font-family:inherit; background:#ffd6a5; border:none; border-radius:10px; cursor:pointer; }
@@ -42,60 +19,24 @@ input{ width:100%; margin-top:6px; padding:6px; font-family:inherit; }
 
 .maze-container{ display:none; flex-direction:column; align-items:center; justify-content:center; width:90vw; max-width:400px; position:relative; }
 .title{ color:#fff; font-size:16px; margin-bottom:10px; text-align:center; }
-
-.maze{
-  display:grid;
-  gap:2px;
-  width:90vw; max-width:350px;
-  grid-template-columns: repeat(12,1fr);
-  grid-template-rows: repeat(12,1fr);
-  background:#2a9d8f;
-  border-radius:20px;
-  position:relative;
-}
-
+.maze{ display:grid; gap:2px; width:90vw; max-width:350px; grid-template-columns: repeat(12,1fr); grid-template-rows: repeat(12,1fr); background:#2a9d8f; border-radius:20px; position:relative;}
 .cell{ position:relative; border-radius:4px; width:100%; height:0; padding-bottom:100%; }
 .wall{ background:#155e63; }
+.char-her, .char-me{ position:absolute; top:0; left:0; width:100%; height:100%; background-size:cover; background-position:center; box-shadow:0 4px 4px rgba(0,0,0,.5); border-radius:6px; }
 
-.char-her, .char-me{
-  position:absolute; top:0; left:0; width:100%; height:100%;
-  background-size:cover; background-position:center;
-  box-shadow:0 4px 4px rgba(0,0,0,.5);
-  border-radius:6px;
-}
-
-.controls{
-  position:absolute;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  display:grid;
-  grid-template-columns:repeat(3,50px);
-  grid-template-rows:repeat(3,50px);
-  gap:5px;
-  z-index:5;
-}
-.controls button{
-  width:50px; height:50px; border:none; border-radius:12px; cursor:pointer; font-size:16px; font-family:inherit; color:#fff;
-}
+.controls{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:grid; grid-template-columns:repeat(3,50px); grid-template-rows:repeat(3,50px); gap:5px; z-index:5; }
+.controls button{ width:50px; height:50px; border:none; border-radius:12px; cursor:pointer; font-size:16px; font-family:inherit; color:#fff; }
 .up{ background:#3498db; grid-column:2; grid-row:1; }
 .down{ background:#f1c40f; grid-column:2; grid-row:3; }
 .left{ background:#e74c3c; grid-column:1; grid-row:2; }
 .right{ background:#2ecc71; grid-column:3; grid-row:2; }
 
-/* Effect images */
-.effect-image{
-  position:absolute;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%) scale(0);
-  opacity:0;
-  transition: opacity 0.8s, transform 0.8s;
-  max-width:100px; max-height:100px;
-  z-index:10;
-}
+.effect-image{ position:fixed; top:0; left:0; width:100vw; height:100vh; object-fit:contain; opacity:0; transition: opacity 0.8s, transform 0.8s; z-index:20; pointer-events:none; transform: scale(0);}
 </style>
 </head>
 <body>
 
+<!-- Start Screen -->
 <div class="bmo-screen" id="startScreen">
   <div class="save-file">
     SAVE FILE 01: FINDING AYA<br><br>
@@ -113,6 +54,7 @@ input{ width:100%; margin-top:6px; padding:6px; font-family:inherit; }
   <div class="loading" id="loading">LOADING PO, BABY HIHI...</div>
 </div>
 
+<!-- Maze -->
 <div class="maze-container" id="mazeContainer">
   <div class="title">FINDING AYA</div>
   <div class="maze" id="maze"></div>
@@ -124,41 +66,20 @@ input{ width:100%; margin-top:6px; padding:6px; font-family:inherit; }
   </div>
 </div>
 
-<!-- Heart, Fireworks, Kiss -->
+<!-- Fullscreen Effects -->
 <img src="https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/heart.PNG" class="effect-image" id="heartEffect">
 <img src="https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/fireworks.PNG" class="effect-image" id="fireworkEffect">
 <img src="https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/kiss.PNG" class="effect-image" id="kissEffect">
 
-<audio id="bgMusic" loop>
-  <source src="love-like-you.mp3" type="audio/mpeg">
-</audio>
+<audio id="bgMusic" loop><source src="love-like-you.mp3" type="audio/mpeg"></audio>
 
 <script>
 // Beep
-function beep(v,f,d){
-  const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();
-  o.connect(g); g.connect(c.destination);
-  o.type='square'; o.frequency.value=f; g.gain.value=v;
-  o.start(); o.stop(c.currentTime+d/1000);
-}
+function beep(v,f,d){ const c=new AudioContext(),o=c.createOscillator(),g=c.createGain(); o.connect(g); g.connect(c.destination); o.type='square'; o.frequency.value=f; g.gain.value=v; o.start(); o.stop(c.currentTime+d/1000); }
 
-// Play sound helper
-function playSound(url, volume=0.5){
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  fetch(url)
-    .then(r=>r.arrayBuffer())
-    .then(b=>ctx.decodeAudioData(b))
-    .then(buffer=>{
-      const src = ctx.createBufferSource();
-      src.buffer = buffer;
-      const gainNode = ctx.createGain();
-      gainNode.gain.value = volume;
-      src.connect(gainNode).connect(ctx.destination);
-      src.start();
-    });
-}
+// Sounds
+function playSound(url, volume=0.5){ const audio=new Audio(url); audio.volume=volume; audio.play(); }
 
-// Elements
 const nameInput = document.getElementById("playerName");
 const enterBtn = document.getElementById("enterBtn");
 const welcome = document.getElementById("welcome");
@@ -170,15 +91,13 @@ const startScreen = document.getElementById("startScreen");
 const mazeContainer = document.getElementById("mazeContainer");
 const mazeDiv = document.getElementById("maze");
 const bgMusic = document.getElementById("bgMusic");
-
 const heartEffect = document.getElementById("heartEffect");
 const fireworkEffect = document.getElementById("fireworkEffect");
 const kissEffect = document.getElementById("kissEffect");
 
-// Typing beep
-nameInput.addEventListener('keydown',()=>beep(.2,600,50));
+// Typing starts music
+nameInput.addEventListener('keydown',()=>{ beep(.2,600,50); bgMusic.volume=0.3; bgMusic.play().catch(()=>{}); });
 
-// Start screen
 enterBtn.addEventListener('click',()=>{
   if(!nameInput.value.trim()) return;
   beep(.3,400,100);
@@ -206,12 +125,10 @@ document.getElementById("yesBtn").addEventListener('click',()=>{
     startScreen.style.display="none";
     mazeContainer.style.display="flex";
     drawMaze();
-    bgMusic.volume=.4;
-    bgMusic.play().catch(()=>{});
   },2000);
 });
 
-// Maze map
+// Maze setup
 const map=[
 [1,1,1,1,1,1,1,1,1,1,1,1],
 [1,0,0,0,1,0,0,0,1,0,0,1],
@@ -251,7 +168,6 @@ function drawMaze(){
   }));
 }
 
-// Move function
 function move(dx,dy){
   beep(.25,650,60);
   const nx=her.x+dx, ny=her.y+dy;
@@ -259,35 +175,30 @@ function move(dx,dy){
     her.x=nx; her.y=ny;
     drawMaze();
     if(nx==me.x && ny==me.y){
-      // Step 1: Heart
-      heartEffect.style.opacity=1;
-      heartEffect.style.transform="translate(-50%,-50%) scale(1.5)";
-      playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/heart-beat.mp3',0.3);
-
+      // Fullscreen effects sequence
+      heartEffect.style.opacity=1; heartEffect.style.transform='scale(1)'; 
+      playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/heart-beat.mp3',0.5);
       setTimeout(()=>{
-        // Step 2: Fireworks
-        fireworkEffect.style.opacity=1;
-        fireworkEffect.style.transform="translate(-50%,-50%) scale(2)";
+        heartEffect.style.opacity=0;
+        fireworkEffect.style.opacity=1; fireworkEffect.style.transform='scale(1)';
         playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/fireworks.mp3',0.5);
-
         setTimeout(()=>{
-          // Step 3: Kiss
           fireworkEffect.style.opacity=0;
-          kissEffect.style.opacity=1;
-          kissEffect.style.transform="translate(-50%,-50%) scale(1.8)";
+          kissEffect.style.opacity=1; kissEffect.style.transform='scale(1)';
           playSound('https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/refs/heads/main/assets/kiss.mp3',0.5);
-
           setTimeout(()=>{
             alert("YAYYY! HAPPY NEW YEAR, BABY HIHI");
-            // Reset maze and effects
+            // Reset
             her={x:1,y:1};
             drawMaze();
             heartEffect.style.opacity=0;
-            heartEffect.style.transform="translate(-50%,-50%) scale(0)";
+            fireworkEffect.style.opacity=0;
             kissEffect.style.opacity=0;
-            kissEffect.style.transform="translate(-50%,-50%) scale(0)";
-            mazeContainer.style.display="none";
-            startScreen.style.display="flex";
+            heartEffect.style.transform='scale(0)';
+            fireworkEffect.style.transform='scale(0)';
+            kissEffect.style.transform='scale(0)';
+            mazeContainer.style.display='none';
+            startScreen.style.display='flex';
           },1500);
         },1500);
       },1500);
