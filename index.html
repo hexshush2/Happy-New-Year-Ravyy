@@ -3,304 +3,444 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAVY Adventure 3D</title>
+<title>RAVY Adventure</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
 <style>
-body{
+body {
   margin:0;
-  font-family:'Press Start 2P',cursive;
-  background:#0b0f1a;
-  color:#fff;
+  padding:0;
+  font-family: 'Press Start 2P', cursive;
+  background:#222;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
   overflow:hidden;
 }
 
-/* ---------- START SCREEN ---------- */
-#startScreen{
-  position:fixed;
+body::before{
+  content:"";
+  position:absolute;
   inset:0;
-  background:radial-gradient(circle at top,#1b263b,#000);
+  background-image: linear-gradient(rgba(255,255,255,0.05) 1px,transparent 1px),
+                    linear-gradient(90deg,rgba(255,255,255,0.05) 1px,transparent 1px);
+  background-size:20px 20px;
+  z-index:-1;
+}
+
+.sparkle {
+  position: absolute;
+  width: 6px; height:6px;
+  background:#fff;
+  border-radius:50%;
+  animation: sparkle 1s infinite;
+}
+@keyframes sparkle{
+  0%{opacity:0;transform:scale(0.5);}
+  50%{opacity:1;transform:scale(1);}
+  100%{opacity:0;transform:scale(0.5);}
+}
+
+.bmo-screen{
+  width:400px;
+  height:550px;
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 0 20px #0f4c3d;
+  color:#fff;
   display:flex;
   flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  z-index:10;
+  background:url("https://raw.githubusercontent.com/hexshush2/Happy-New-Year-Ravyy/main/bmo-face.jpg") center/cover;
 }
-#startScreen input{
+
+.save-file{
+  background:rgba(0,0,0,.4);
+  padding:12px;
+  border-radius:10px;
+}
+
+input{
+  width:100%;
+  margin-top:6px;
+  padding:6px;
   font-family:inherit;
+}
+
+.enter-btn, .choice{
+  margin-top:10px;
   padding:10px;
-  margin:12px;
-  border-radius:8px;
-  border:none;
-}
-#startScreen button{
   font-family:inherit;
-  padding:10px 18px;
-  background:#ee9b00;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-/* ---------- MAZE ---------- */
-.maze-container{
-  display:none;
-  position:absolute;
-  inset:0;
-  margin:auto;
-  width:600px;
-  height:600px;
-  perspective:1000px;
-}
-.maze-cell{
-  position:absolute;
-  width:40px;height:40px;
-  transform-style:preserve-3d;
-}
-.cube{
-  position:absolute;
-  width:40px;height:40px;
-  transform-style:preserve-3d;
-}
-.cube div{
-  position:absolute;
-  width:40px;height:40px;
-  background:#0a9396;
-  opacity:.95;
-}
-.front{transform:translateZ(20px)}
-.back{transform:rotateY(180deg) translateZ(20px)}
-.left{transform:rotateY(-90deg) translateZ(20px)}
-.right{transform:rotateY(90deg) translateZ(20px)}
-.top{transform:rotateX(90deg) translateZ(20px)}
-.bottom{transform:rotateX(-90deg) translateZ(20px)}
-
-/* ---------- CHARACTERS ---------- */
-.player{
-  position:absolute;
-  width:36px;height:36px;
-  transform-style:preserve-3d;
-  transition:transform .3s;
-}
-.scene{width:36px;height:36px;perspective:600px}
-.character{
-  position:relative;
-  width:100%;height:100%;
-  transform-style:preserve-3d;
-  animation:spin 6s linear infinite, bounce .6s alternate infinite;
-}
-@keyframes spin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
-@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(4px)}}
-
-.part{
-  position:absolute;
-  width:18px;height:18px;
-  transform-style:preserve-3d;
-}
-.part div{
-  position:absolute;
-  width:18px;height:18px;
-  background:inherit;
-  border:1px solid rgba(255,255,255,.15);
-}
-
-/* Faces */
-.face{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:10px;
-}
-
-/* ---------- CONTROLS ---------- */
-#controls{
-  position:fixed;
-  right:20px;
-  top:50%;
-  transform:translateY(-50%);
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-#controls button{
-  width:54px;height:54px;
-  font-family:inherit;
-  background:#ee9b00;
+  background:#ffd6a5;
   border:none;
   border-radius:10px;
   cursor:pointer;
 }
 
-/* ---------- FIREWORKS ---------- */
-.firework{
-  position:fixed;
-  width:6px;height:6px;
-  border-radius:50%;
-  background:#fff;
-  animation:explode 1s forwards;
+.progress-bar{
+  height:10px;
+  background:#b2f7ef;
+  margin-top:10px;
+  border-radius:6px;
+  overflow:hidden;
 }
-@keyframes explode{
-  to{
-    transform:translate(var(--x),var(--y)) scale(0);
-    opacity:0;
-  }
+
+.progress{
+  height:100%;
+  width:0%;
+  background:#ffaaa5;
+  transition:width 2s;
+}
+
+.welcome,.question,.buttons,.loading{
+  display:none;
+  margin-top:15px;
+  text-align:center;
+  font-size:10px;
+}
+
+.buttons{
+  display:none;
+  justify-content:space-around;
+  margin-top:auto;
+}
+
+/* Maze */
+.maze-container{
+  display:none;
+  flex-direction:row;
+  align-items:flex-start;
+  justify-content:center;
+  position:relative;
+  width:100%;
+  max-width:700px;
+}
+
+.maze-wrapper{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  position:relative;
+}
+
+.title{
+  color:#fff;
+  font-size:16px;
+  margin-bottom:10px;
+  text-align:center;
+}
+
+.maze{
+  display:grid;
+  grid-template:repeat(16,40px)/repeat(16,40px);
+  gap:3px;
+  background:#2a9d8f;
+  padding:10px;
+  border-radius:20px;
+  box-shadow:inset 0 6px #155e63,0 12px 20px rgba(0,0,0,.3);
+}
+
+.cell{
+  border-radius:4px;
+  position:relative;
+}
+
+.wall{ background:#155e63; }
+
+.char-her, .char-me{
+  width:36px; height:36px;
+  position:absolute;
+  left:2px; top:2px;
+  border-radius:4px;
+  box-shadow:0 4px 4px rgba(0,0,0,.5);
+  background-size:cover;
+  background-position:center;
+}
+
+.char-her{ background-image:url('her.PNG'); }
+.char-me{ background-image:url('me.PNG'); }
+
+.controls{
+  position:absolute;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  margin-top:10px;
+}
+
+.star-controls{
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  display:grid;
+  grid-template:50px 50px / 50px 50px;
+  gap:10px;
+}
+
+.star-controls button{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  border:none;
+  cursor:pointer;
+  font-size:20px;
+  font-family:inherit;
+  color:#fff;
+}
+
+.up{ background:#3498db; grid-column:2; grid-row:1;}
+.down{ background:#f1c40f; grid-column:2; grid-row:2;}
+.left{ background:#e74c3c; grid-column:1; grid-row:2;}
+.right{ background:#2ecc71; grid-column:2; grid-row:2;}
+
+/* Heart & message */
+.heart{
+  position:absolute;
+  width:50px; height:50px;
+  background:red;
+  clip-path: polygon(50% 0%, 61% 9%, 68% 18%, 75% 27%, 75% 37%, 68% 47%, 50% 60%, 32% 47%, 25% 37%, 25% 27%, 32% 18%, 39% 9%);
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  z-index:10;
+}
+.message{
+  position:absolute;
+  color:#fff;
+  font-size:14px;
+  top:60%;
+  left:50%;
+  transform:translateX(-50%);
+  opacity:0;
+  z-index:10;
 }
 </style>
 </head>
-
 <body>
 
-<!-- START -->
-<div id="startScreen">
-  <div>SAVE FILE 01</div>
-  <div>FINDING AYA</div>
-  <input id="playerName" placeholder="Enter your name">
-  <button id="startBtn">START</button>
+<!-- Start Screen -->
+<div class="bmo-screen" id="startScreen">
+  <div class="save-file">
+    SAVE FILE 01: FINDING AYA<br><br>
+    PLAYER:
+    <input id="playerName" placeholder="Enter your name">
+    <button class="enter-btn" id="enterBtn">ENTER</button>
+    <div class="progress-bar"><div class="progress" id="progress"></div></div>
+  </div>
+
+  <div class="welcome" id="welcome">I’VE LONG BEEN WAITING FOR YOU PO HIHI</div>
+  <div class="question" id="question">START NOW PO?</div>
+  <div class="buttons" id="buttons">
+    <button class="choice" id="yesBtn">YES, BABY</button>
+    <button class="choice" id="noBtn">NO!</button>
+  </div>
+  <div class="loading" id="loading">LOADING PO, BABY HIHI...</div>
 </div>
 
-<!-- MAZE -->
-<div class="maze-container" id="mazeContainer"></div>
-
-<!-- CONTROLS -->
-<div id="controls">
-  <button onclick="move(0,-1)">⬆</button>
-  <button onclick="move(-1,0)">⬅</button>
-  <button onclick="move(1,0)">➡</button>
-  <button onclick="move(0,1)">⬇</button>
+<!-- Maze -->
+<div class="maze-container" id="mazeContainer">
+  <div class="maze-wrapper">
+    <div class="title">FINDING AYA</div>
+    <div class="maze" id="maze"></div>
+  </div>
+  <div class="star-controls">
+    <button class="up" onclick="move(0,-1)">⬆</button>
+    <button class="down" onclick="move(0,1)">⬇</button>
+    <button class="left" onclick="move(-1,0)">⬅</button>
+    <button class="right" onclick="move(1,0)">➡</button>
+  </div>
+  <div class="heart" id="heart"></div>
+  <div class="message" id="message">YAYYY! HAPPY NEW YEAR BABY KO HIHI</div>
 </div>
 
-<!-- AUDIO -->
 <audio id="bgMusic" loop>
   <source src="love-like-you.mp3" type="audio/mpeg">
 </audio>
-<audio id="beep">
-  <source src="data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAA" type="audio/wav">
-</audio>
 
 <script>
-/* ---------- MAP ---------- */
+// Beep function
+function beep(v,f,d){
+  const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g); g.connect(c.destination);
+  o.type='square'; o.frequency.value=f; g.gain.value=v;
+  o.start(); o.stop(c.currentTime+d/1000);
+}
+
+// Sparkles
+function createSparkle(){
+  const s=document.createElement('div');
+  s.classList.add('sparkle');
+  s.style.left=Math.random()*window.innerWidth+'px';
+  s.style.top=Math.random()*window.innerHeight+'px';
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),1000);
+}
+setInterval(createSparkle, 300);
+
+// Elements
+const nameInput = document.getElementById("playerName");
+const enterBtn = document.getElementById("enterBtn");
+const welcome = document.getElementById("welcome");
+const question = document.getElementById("question");
+const buttons = document.getElementById("buttons");
+const progress = document.getElementById("progress");
+const loading = document.getElementById("loading");
+const startScreen = document.getElementById("startScreen");
+const mazeContainer = document.getElementById("mazeContainer");
+const mazeDiv = document.getElementById("maze");
+const bgMusic = document.getElementById("bgMusic");
+const heart = document.getElementById("heart");
+const message = document.getElementById("message");
+
+// Typing beep
+nameInput.addEventListener('keydown',()=>beep(.2,600,50));
+
+// Start screen
+enterBtn.addEventListener('click',()=>{
+  if(!nameInput.value.trim()) return;
+  beep(.3,400,100);
+  progress.style.width="100%";
+  welcome.style.display="block";
+  question.style.display="block";
+  buttons.style.display="flex";
+});
+
+// NO button
+document.getElementById("noBtn").addEventListener('mouseenter',()=>{
+  beep(.3,800,80);
+  const btn=document.getElementById("noBtn");
+  btn.style.position='absolute';
+  btn.style.left=Math.random()*200+'px';
+  btn.style.top=Math.random()*200+'px';
+});
+
+// YES button
+document.getElementById("yesBtn").addEventListener('click',()=>{
+  beep(.3,500,100);
+  loading.style.display="block";
+  let dots=0;
+  const loop=setInterval(()=>{dots=(dots+1)%4; loading.textContent="LOADING SAVE FILE"+'.'.repeat(dots);},400);
+  setTimeout(()=>{
+    clearInterval(loop);
+    startScreen.style.display="none";
+    mazeContainer.style.display="flex";
+    drawMaze();
+    bgMusic.volume=.4;
+    bgMusic.play().catch(()=>{});
+  },2000);
+});
+
+// Maze map 16x16 complex
 const map=[
-[0,1,0,0,0,1,0,0,1,0,0,0],
-[0,1,0,1,0,1,0,1,1,0,1,0],
-[0,0,0,1,0,0,0,0,1,0,0,0],
-[1,1,0,1,1,1,1,0,1,0,1,0],
-[0,0,0,0,0,0,1,0,0,0,1,0],
-[0,1,1,1,1,0,1,1,1,0,1,0],
-[0,0,0,0,1,0,0,0,0,0,0,0],
-[1,1,0,0,1,0,1,1,0,1,1,1],
-[0,0,0,0,0,0,0,0,1,0,0,0],
-[0,1,1,1,0,1,1,0,1,1,1,0],
-[0,0,0,1,0,0,0,1,0,0,0,0],
-[0,0,0,0,1,1,0,0,0,0,1,0]
+[0,1,0,0,0,1,0,0,1,0,1,0,0,1,0,0],
+[0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0],
+[0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0],
+[1,1,0,1,1,1,1,0,1,0,1,0,1,1,1,0],
+[0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0],
+[0,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0],
+[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+[1,1,0,0,1,0,1,1,0,1,1,1,0,1,1,0],
+[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+[0,1,1,1,0,1,1,0,1,1,1,0,1,1,1,0],
+[0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0],
+[0,0,0,0,1,1,0,0,0,0,1,0,0,0,1,0],
+[0,0,1,0,1,0,0,1,0,1,0,0,1,0,0,0],
+[0,1,0,0,0,0,1,0,0,0,1,0,0,1,0,0],
+[0,0,0,1,1,0,0,1,0,1,0,0,1,1,0,0],
+[1,0,0,0,0,1,0,0,1,0,1,0,0,0,0,0]
 ];
 
-const maze=document.getElementById("mazeContainer");
-const bg=document.getElementById("bgMusic");
-const beep=document.getElementById("beep");
+let her={x:0,y:0};
+const me={x:15,y:15};
 
-let her={x:0,y:0};     // PLAYER
-const me={x:11,y:11}; // STATIC GOAL
-
-/* ---------- MAZE ---------- */
 function drawMaze(){
-  maze.innerHTML="";
+  mazeDiv.innerHTML="";
   map.forEach((r,y)=>r.forEach((c,x)=>{
-    if(c){
-      const w=document.createElement("div");
-      w.className="maze-cell";
-      w.style.transform=`translate3d(${x*44}px,${y*44}px,0)`;
-      w.innerHTML=`<div class="cube">
-        <div class="front"></div><div class="back"></div>
-        <div class="left"></div><div class="right"></div>
-        <div class="top"></div><div class="bottom"></div>
-      </div>`;
-      maze.appendChild(w);
+    const d=document.createElement('div');
+    d.className='cell'+(c?' wall':'');
+    if(her.x==x && her.y==y){
+      const div=document.createElement('div');
+      div.className='char-her';
+      d.appendChild(div);
     }
+    if(me.x==x && me.y==y){
+      const div=document.createElement('div');
+      div.className='char-me';
+      d.appendChild(div);
+    }
+    mazeDiv.appendChild(d);
   }));
-  placeCharacters();
 }
 
-/* ---------- CHARACTER ---------- */
-function characterHTML(face,shirt){
-return `
-<div class="scene">
-<div class="character">
-  <div class="part" style="top:0;left:9px;background:#f1c27d">
-    <div class="front face">${face}</div>
-    <div class="back"></div><div class="left"></div><div class="right"></div>
-    <div class="top"></div><div class="bottom"></div>
-  </div>
-  <div class="part" style="top:18px;left:9px;background:${shirt}">
-    <div class="front"></div><div class="back"></div>
-    <div class="left"></div><div class="right"></div>
-    <div class="top"></div><div class="bottom"></div>
-  </div>
-</div>
-</div>`;
-}
-
-function placeCharacters(){
-  const h=document.createElement("div");
-  h.className="player";h.id="herChar";
-  h.innerHTML=characterHTML("😊","#6a4c93");
-  h.style.transform=`translate3d(${her.x*44}px,${her.y*44}px,0)`;
-  maze.appendChild(h);
-
-  const m=document.createElement("div");
-  m.className="player";m.id="meChar";
-  m.innerHTML=characterHTML("💖","#ee9b00");
-  m.style.transform=`translate3d(${me.x*44}px,${me.y*44}px,0)`;
-  maze.appendChild(m);
-}
-
-/* ---------- MOVE ---------- */
+// Move function
 function move(dx,dy){
+  beep(.25,650,60);
   const nx=her.x+dx, ny=her.y+dy;
   if(map[ny]?.[nx]===0){
-    her.x=nx;her.y=ny;
-    document.getElementById("herChar").style.transform=
-      `translate3d(${nx*44}px,${ny*44}px,0)`;
-    beep.play().catch(()=>{});
-  }
-  if(nx===me.x && ny===me.y){
-    celebrate();
+    her.x=nx; her.y=ny;
+    drawMaze();
+    if(nx==me.x && ny==me.y){
+      // Show heart & message
+      heart.style.transition="transform 0.8s";
+      heart.style.transform="translate(-50%,-50%) scale(1.5)";
+      message.style.transition="opacity 1s";
+      message.style.opacity=1;
+      // Fireworks after delay
+      setTimeout(()=>fireworksSequence(),1000);
+    }
   }
 }
 
-/* ---------- FIREWORKS ---------- */
-function celebrate(){
-  bg.volume=.6;
-  for(let i=0;i<40;i++){
-    const f=document.createElement("div");
-    f.className="firework";
-    f.style.left="50%";f.style.top="50%";
-    f.style.background=`hsl(${Math.random()*360},100%,60%)`;
-    f.style.setProperty("--x",(Math.random()*400-200)+"px");
-    f.style.setProperty("--y",(Math.random()*400-200)+"px");
-    document.body.appendChild(f);
-    setTimeout(()=>f.remove(),1000);
-  }
-  document.getElementById("herChar").style.transform+=" scale(1.5)";
-  document.getElementById("meChar").style.transform+=" scale(1.5)";
-}
-
-/* ---------- INPUT ---------- */
 document.onkeydown=e=>{
-  if(e.key==="ArrowUp")move(0,-1);
-  if(e.key==="ArrowDown")move(0,1);
-  if(e.key==="ArrowLeft")move(-1,0);
-  if(e.key==="ArrowRight")move(1,0);
+  if(e.key=="ArrowUp") move(0,-1);
+  if(e.key=="ArrowDown") move(0,1);
+  if(e.key=="ArrowLeft") move(-1,0);
+  if(e.key=="ArrowRight") move(1,0);
 };
 
-document.getElementById("startBtn").onclick=()=>{
-  if(!playerName.value.trim())return;
-  startScreen.style.display="none";
-  maze.style.display="block";
-  drawMaze();
-  bg.volume=.4;
-  bg.play().catch(()=>{});
-};
+// Simple fireworks animation
+function fireworksSequence(){
+  const canvas=document.createElement('canvas');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  canvas.style.position='absolute';
+  canvas.style.top=0;
+  canvas.style.left=0;
+  canvas.style.zIndex=20;
+  document.body.appendChild(canvas);
+  const ctx=canvas.getContext('2d');
+
+  const particles=[];
+  for(let i=0;i<200;i++){
+    particles.push({
+      x:window.innerWidth/2,
+      y:window.innerHeight/2,
+      vx:(Math.random()-0.5)*8,
+      vy:(Math.random()-0.5)*8,
+      color:`hsl(${Math.random()*360},100%,60%)`,
+      life:100
+    });
+  }
+
+  function animate(){
+    ctx.fillStyle='rgba(0,0,0,0.1)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+      ctx.fillStyle=p.color;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,3,0,Math.PI*2);
+      ctx.fill();
+      p.x+=p.vx;
+      p.y+=p.vy;
+      p.life--;
+    });
+    if(particles.some(p=>p.life>0)){
+      requestAnimationFrame(animate);
+    } else {
+      canvas.remove();
+    }
+  }
+  animate();
+}
 </script>
-
 </body>
 </html>
